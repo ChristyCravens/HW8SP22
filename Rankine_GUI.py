@@ -103,6 +103,22 @@ class Ui_Form(object):
         self.rdo_Quality.setChecked(True)
         self.rdo_Quality.setObjectName("rdo_Quality")
         self.gridLayout.addWidget(self.rdo_Quality, 2, 2, 1, 1)
+        self.rdo_SI = QtWidgets.QRadioButton(self.gb_Input)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        
+        # Creating buttons for SI and English units for ease of conversion
+        self.rdo_SI.setFont(font)
+        self.rdo_SI.setChecked(True)
+        self.rdo_SI.setObjectName("rdo_SI")
+        self.gridLayout.addWidget(self.rdo_SI, 2, 2, 2, 2)
+        self.rdo_English = QtWidgets.QRadioButton(self.gb_Input)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.rdo_English.setFont(font)
+        self.rdo_English.setObjectName("rdo_English")
+        self.gridLayout.addWidget(self.rdo_English, 2, 3, 2, 2)
+
         self.rdo_THigh = QtWidgets.QRadioButton(self.gb_Input)
         font = QtGui.QFont()
         font.setPointSize(12)
