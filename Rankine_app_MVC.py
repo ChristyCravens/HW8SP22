@@ -69,7 +69,11 @@ class MainWindow(qtw.QWidget, Ui_Form):
         self.RC.updateModel((self.le_PHigh, self.le_PLow, self.rdo_Quality, self.le_TurbineInletCondition, self.le_TurbineEff))
 
     def SelectQualityOrTHigh(self):
-        self.lbl_TurbineInletCondition.setText(("Turbine Inlet: {} =".format('x'if self.rdo_Quality.isChecked() else 'THigh')))
+        self.Tclick = Calc_state.SatPropsIsobar(P=int(self.le_PHigh.text()))
+        self.lbl_TurbineInletCondition.setText(
+            ("Turbine Inlet: {} =".format('x' if self.rdo_Quality.isChecked() else 'THigh')))
+        if self.rdo_THigh.isChecked():
+            self.le_TurbineInletCondition.setText(str(self.Tclick.TSat))
 
 #if this module is being imported, this won't run. If it is the main module, it will run.
 if __name__== '__main__':
