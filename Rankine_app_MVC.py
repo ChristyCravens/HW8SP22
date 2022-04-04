@@ -127,14 +127,19 @@ class MainWindow(qtw.QWidget, Ui_Form):
         Actions for the code to take when quality or thigh is selected.
         :return:
         """
+        # Create shortcut for pressure conversion factor based on if SI is checked or English
         PC = 100 if self.rb_SI.isChecked() else UC.psi_to_kpa
+        # If Quality is checked, update the Turbine Inlet Condition accordingly
         if self.rdo_Quality.isChecked():
             self.le_TurbineInletCondition.setText("1.0")
             self.le_TurbineInletCondition.setEnabled(False)
+        # If THigh is checked, update the Turbine Inlet Condition accordingly
         else:
+            # Create shortcuts for SI being checked and Tsat conversions
             SI = self.rb_SI.isChecked()
             Tsat=SPI(float(self.le_PHigh.text())*PC).TSat
             Tsat=Tsat if SI else UC.C_to_F(Tsat)
+            # Update the text based on conversions above
             self.le_TurbineInletCondition.setText("{:0.2f}".format(Tsat))
             self.le_TurbineInletCondition.setEnabled(True)
         x=self.rdo_Quality.isChecked()
