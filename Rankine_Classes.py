@@ -236,18 +236,32 @@ class rankineView():
         self.plot_cycle_TS(axObj=ax, Model=Model)
         canvas.draw()
 
-    def newUnits(self):
+    def newUnits(self,w,ow,Model=None):
         """
         This function updates the unit outputs based on what the user selects, between SI and English.
         :return:
         """
-        self.RC.updateUnits(self.widgets, self.otherwidgets, SI=self.rb_SI.isChecked())
-        # # If SI is checked, update units to SI
-        # if self.rb_SI.isChecked():
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=True)
-        # # If English is checked, update units to English
-        # else:
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=False)
+        self.outputToGUI(w,Model=Model)
+        lbl_TurbineInletConditon, rdo_Quality, le_PHigh, le_PLow, le_TurbineInletCondition,lbl_PHigh,lbl_PLow,lbl_H1Units,lbl_H2Units,lbl_H3Units,lbl_H4Units,lbl_TurbinWorkUnits,lbl_PumpWorkUnits,lbl_HeatAddedUnits,lbl_SatPropHigh,lbl_SatPropLow=ow
+        PC=1/100 if Model.SI else UC.kpa_to_psi
+        le_PHigh.setText("{:0.2f}".format(PC*Model.p_high))
+        le_PLow.setText("{:0.2f}".format(PC*Model.p_low))
+        if not rdo_Quality.isChecked():
+            T=float(le_TurbineInletCondition.text())
+            T=UC.F_to_C(T) if Model.SI else UC.C_to_F(T)
+            TUnits= "C" if Model.SI else "F"
+            le_TurbineInletCondition.setText("{:0.2f}".format(T))
+            lbl_TurbineInletConditon.SetText("Turbine Inlet: THigh({}):".format(TUnits))
+        lbl_PHigh.setText("P High ({})".format('bar' if Model.SI else 'psi'))
+        lbl_PLow.setText("P Low ({})".format('bar' if Model.SI else 'psi'))
+        HUnits="kJ/kg" if Model.SI else "BTU/lb"
+        lbl_H1Units.setText(HUnits)
+        lbl_H2Units.setText(HUnits)
+        lbl_H3Units.setText(HUnits)
+        lbl_H4Units.setText(HUnits)
+        lbl_TurbinWorkUnits.setText(HUnits)
+        lbl_PumpWorkUnits.setText(HUnits)
+        lbl_HeatAddedUnits.setText(HUnits)
         return
 
     def print_summary(self, Model=None):
