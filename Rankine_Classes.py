@@ -200,13 +200,13 @@ class rankineView():
 
         # Added if/else statements below based on if the user has selected SI or English units.
         # These statements convert the values for H1, H2, H3, H4, Turbine Work, Pump Work, and Heat Added
-        le_H1.setText("{:0.2f}".format(Model.state1.h)) #H1 if Model.SI else UC.kJperkg_to_BTUperlb(H1)))
-        le_H2.setText("{:0.2f}".format(Model.state2.h)) #H2 if Model.SI else UC.kJperkg_to_BTUperlb(H2)))
-        le_H3.setText("{:0.2f}".format(Model.state3.h)) #H3 if Model.SI else UC.kJperkg_to_BTUperlb(H3)))
-        le_H4.setText("{:0.2f}".format(Model.state4.h)) #H4 if Model.SI else UC.kJperkg_to_BTUperlb(H4)))
-        le_TurbineWork.setText("{:0.2f}".format(Model.turbine_work)) #TW if Model.SI else UC.kJperkg_to_BTUperlb(TW)))
-        le_PumpWork.setText("{:0.2f}".format(Model.pump_work)) #PW if Model.SI else UC.kJperkg_to_BTUperlb(PW)))
-        le_HeatAdded.setText("{:0.2f}".format(Model.heat_added)) #HA if Model.SI else UC.kJperkg_to_BTUperlb(HA)))
+        le_H1.setText("{:0.2f}".format(Model.state1.h))
+        le_H2.setText("{:0.2f}".format(Model.state2.h))
+        le_H3.setText("{:0.2f}".format(Model.state3.h))
+        le_H4.setText("{:0.2f}".format(Model.state4.h))
+        le_TurbineWork.setText("{:0.2f}".format(Model.turbine_work))
+        le_PumpWork.setText("{:0.2f}".format(Model.pump_work))
+        le_HeatAdded.setText("{:0.2f}".format(Model.heat_added))
 
         # Efficiency doesn't need converting and PLow and PHigh are already converted previously in the code
         le_Efficiency.setText("{:0.2f}".format(Model.efficiency))
@@ -225,7 +225,9 @@ class rankineView():
         """
         self.outputToGUI(w,Model=Model)
         # Assign the tuple of widgets
-        lbl_TurbineInletCondition, rdo_Quality, le_PHigh, le_PLow, le_TurbineInletCondition,lbl_PHigh,lbl_PLow,lbl_H1Units,lbl_H2Units,lbl_H3Units,lbl_H4Units,lbl_TurbineWorkUnits,lbl_PumpWorkUnits,lbl_HeatAddedUnits,lbl_SatPropHigh,lbl_SatPropLow=ow
+        lbl_TurbineInletCondition, rdo_Quality, le_PHigh, lbl_PHigh, le_PLow, lbl_PLow, lbl_H1Units, lbl_H2Units, lbl_H3Units, lbl_H4Units,  le_TurbineInletCondition, lbl_TurbineWorkUnits, lbl_PumpWorkUnits, lbl_HeatAddedUnits=ow
+
+        #lbl_TurbineInletCondition, rdo_Quality, le_PHigh, le_PLow, le_TurbineInletCondition,lbl_PHigh,lbl_PLow,lbl_H1Units,lbl_H2Units,lbl_H3Units,lbl_H4Units,lbl_TurbineWorkUnits,lbl_PumpWorkUnits,lbl_HeatAddedUnits,lbl_SatPropHigh,lbl_SatPropLow=ow
         # Create a shortcut for the pressure conversions based on SI/English selected
         PC=1/100 if Model.SI else UC.kpa_to_psi
         # Set text for PHigh/PLow with conversion
