@@ -70,7 +70,7 @@ class rankineController():
         self.Model.t_high = None if rdo_Quality.isChecked() else (TI if self.Model.SI else UC.F_to_C(TI))
 
         self.Model.turbine_eff = float(le_TurbineEff.text())
-        #do the calculation
+        # do the calculation
         self.calc_efficiency()
         self.updateView(self.Widgets)
 
@@ -159,26 +159,12 @@ class rankineController():
         :param SI: True = SI is selected
         :return:
         """
-        #I've got to pass the correct set of widgets to work on.
-        #I'll pass them through *args.  In the app, I define self.widgets and self.other widgets
-        #I'll pass these widgets along to the view as well as the model
-        #in the view, I will unpack the widgets, change numerical values, label units and the chart
-
-        #Assign my widgets group to specified argument tuple [0]
-        # self.le_H1, self.le_H2, self.le_H3, self.le_H4, self.le_TurbineWork,                    \
-        # self.le_PumpWork, self.le_HeatAdded, self.le_Efficiency, self.lbl_SatPropHigh,          \
-        # self.lbl_SatPropLow, self.ax, self.canvas = args[0]
-        #
-        # # Assign my other widgets group to specified argument tuple [1]
-        # self.le_PHigh, self.le_PLow, self.le_TurbineInletCondition, self.lbl_PHigh,             \
-        # self.lbl_PLow, self.lbl_H1Units, self.lbl_H2Units, self.lbl_H3Units, self.lbl_H4Units,  \
-        # self.lbl_TurbineWorkUnits, self.lbl_PumpWorkUnits, self.lbl_HeatAddedUnits = args[1]
-        #
-        # if SI is False:
-        #     self.le_PLow.setText(str(UC.bar_to_psi+float(self.le_PLow.text())))
-        #     self.le_PHigh.setText(str(UC.bar_to_psi+float(self.le_PHigh.text())))
-        # self.updateView(args)
+        # I've got to pass the correct set of widgets to work on.
+        # I'll pass them through *args.  In the app, I define self.widgets and self.other widgets
+        # I'll pass these widgets along to the view as well as the model
+        # in the view, I will unpack the widgets, change numerical values, label units and the chart
         self.Model.SI=SI
+        # Update the view with the new units
         self.View.newUnits(w, ow, Model=self.Model)
         pass
 
@@ -242,26 +228,40 @@ class rankineView():
         :return:
         """
         self.outputToGUI(w,Model=Model)
+        # Assigne the tuple of widgets
         lbl_TurbineInletConditon, rdo_Quality, le_PHigh, le_PLow, le_TurbineInletCondition,lbl_PHigh,lbl_PLow,lbl_H1Units,lbl_H2Units,lbl_H3Units,lbl_H4Units,lbl_TurbinWorkUnits,lbl_PumpWorkUnits,lbl_HeatAddedUnits,lbl_SatPropHigh,lbl_SatPropLow=ow
+        # Create a shortcut for the pressure conversions based on SI/English selected
         PC=1/100 if Model.SI else UC.kpa_to_psi
+        # Set text for PHigh/PLow with conversion
         le_PHigh.setText("{:0.2f}".format(PC*Model.p_high))
         le_PLow.setText("{:0.2f}".format(PC*Model.p_low))
+        # If Quality isn't checked, update the text for the Turbine Inlet Condition based on units selected
         if not rdo_Quality.isChecked():
+            # Shortcut for the turbine inlet condition text
             T=float(le_TurbineInletCondition.text())
+            # Updated shortcut for conversions using the previous shortcut for the turbine inlet condition
             T=UC.F_to_C(T) if Model.SI else UC.C_to_F(T)
+            # Temp unit conversion for C or F
             TUnits= "C" if Model.SI else "F"
+            # Update the turbine inlet condition output text for F or C
             le_TurbineInletCondition.setText("{:0.2f}".format(T))
-            lbl_TurbineInletConditon.SetText("Turbine Inlet: THigh({}):".format(TUnits))
+            # Update the displayed text for THigh
+            lbl_TurbineInletCondition.SetText("Turbine Inlet: THigh({}):".format(TUnits))
+        # Update the displayed text for PHigh that has the appropriate conversions
         lbl_PHigh.setText("P High ({})".format('bar' if Model.SI else 'psi'))
+        # Update the displayed text for PLow that has the appropriate conversions
         lbl_PLow.setText("P Low ({})".format('bar' if Model.SI else 'psi'))
-        HUnits="kJ/kg" if Model.SI else "BTU/lb"
-        lbl_H1Units.setText(HUnits)
-        lbl_H2Units.setText(HUnits)
-        lbl_H3Units.setText(HUnits)
-        lbl_H4Units.setText(HUnits)
-        lbl_TurbinWorkUnits.setText(HUnits)
-        lbl_PumpWorkUnits.setText(HUnits)
-        lbl_HeatAddedUnits.setText(HUnits)
+        # Create a shortcut to update units between kJ/kg and BTU/lb based on if SI/English is selected
+        Units="kJ/kg" if Model.SI else "BTU/lb"
+        # Update text for the units for H1, H2, H3 & H4
+        lbl_H1Units.setText(Units)
+        lbl_H2Units.setText(Units)
+        lbl_H3Units.setText(Units)
+        lbl_H4Units.setText(Units)
+        # Update text for the units for Turbine Work, Pump Work, and Heat added
+        lbl_TurbineWorkUnits.setText(Units)
+        lbl_PumpWorkUnits.setText(Units)
+        lbl_HeatAddedUnits.setText(Units)
         return
 
     def print_summary(self, Model=None):
