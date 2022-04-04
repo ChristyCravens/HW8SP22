@@ -224,7 +224,7 @@ class rankineView():
         :return:
         """
         self.outputToGUI(w,Model=Model)
-        # Assigne the tuple of widgets
+        # Assign the tuple of widgets
         lbl_TurbineInletCondition, rdo_Quality, le_PHigh, le_PLow, le_TurbineInletCondition,lbl_PHigh,lbl_PLow,lbl_H1Units,lbl_H2Units,lbl_H3Units,lbl_H4Units,lbl_TurbineWorkUnits,lbl_PumpWorkUnits,lbl_HeatAddedUnits,lbl_SatPropHigh,lbl_SatPropLow=ow
         # Create a shortcut for the pressure conversions based on SI/English selected
         PC=1/100 if Model.SI else UC.kpa_to_psi
