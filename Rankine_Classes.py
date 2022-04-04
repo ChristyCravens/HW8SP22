@@ -1,14 +1,11 @@
-from Calc_state2 import Steam_SI as steam
-from Calc_state2 import SatPropsIsobar
-from Calc_state2 import UnitConverter as UC
+from Calc_state import Steam_SI as steam
+from Calc_state import SatPropsIsobar
 import numpy as np
 from matplotlib import pyplot as plt
 #these imports are necessary for drawing a matplot lib graph on my GUI
 #no simple widget for this exists in QT Designer, so I have to add the widget in code.
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-
-# Group = Christy Cravens, Robert Lucas, and Gabe Moya
 
 class rankineModel():
     def __init__(self):
@@ -36,7 +33,6 @@ class rankineModel():
         self.state2=None
         self.state3=None
         self.state4=None
-        self.SI=True
 
 class rankineController():
     def __init__(self, *args):
@@ -59,18 +55,14 @@ class rankineController():
         #unpack tuple of input widgets
         le_PHigh, le_PLow, rdo_Quality, le_TurbineInletCondition, le_TurbineEff=args[0]
 
-        # Converter for PHigh/PLow based on selection of SI or English
+        # Conversions: If in SI, or convert to English
         PC = 100 if self.Model.SI else UC.psi_to_kpa
 
         #update the model
         self.Model.p_high = float(le_PHigh.text()) * PC  # get the high pressure isobar in kPa
         self.Model.p_low = float(le_PLow.text()) * PC  # get the low pressure isobar in kPa
-
-        # Shortcut for the turbine inlet float value
         TI = float(le_TurbineInletCondition.text())
-        # If SI/English is selected, the output is modified accordingly with the latter if/else statement
-        self.Model.t_high = None if rdo_Quality.isChecked() else (TI if self.Model.SI else UC.F_to_C(TI))
-
+        self.Model.t_high = None if rdo_Quality.isChecked() else (TI if self.Model.SI else UC.F_to_C(T))
         self.Model.turbine_eff = float(le_TurbineEff.text())
         #do the calculation
         self.calc_efficiency()
@@ -154,51 +146,6 @@ class rankineController():
         """
         self.View.plot_cycle_TS(axObj=axObj, Model=self.Model)
 
-    def updateUnits(self, w, ow, SI=True):
-        """
-        This function updates the units from SI to English or vice versa.
-        :param args: Widgets to update
-        :param SI: True = SI is selected
-        :return:
-        """
-        #I've got to pass the correct set of widgets to work on.
-        #I'll pass them through *args.  In the app, I define self.widgets and self.other widgets
-        #I'll pass these widgets along to the view as well as the model
-        #in the view, I will unpack the widgets, change numerical values, label units and the chart
-
-        #Assign my widgets group to specified argument tuple [0]
-        # self.le_H1, self.le_H2, self.le_H3, self.le_H4, self.le_TurbineWork,                    \
-        # self.le_PumpWork, self.le_HeatAdded, self.le_Efficiency, self.lbl_SatPropHigh,          \
-        # self.lbl_SatPropLow, self.ax, self.canvas = args[0]
-        #
-        # # Assign my other widgets group to specified argument tuple [1]
-        # self.le_PHigh, self.le_PLow, self.le_TurbineInletCondition, self.lbl_PHigh,             \
-        # self.lbl_PLow, self.lbl_H1Units, self.lbl_H2Units, self.lbl_H3Units, self.lbl_H4Units,  \
-        # self.lbl_TurbineWorkUnits, self.lbl_PumpWorkUnits, self.lbl_HeatAddedUnits = args[1]
-        #
-        # if SI is False:
-        #     self.le_PLow.setText(str(UC.bar_to_psi+float(self.le_PLow.text())))
-        #     self.le_PHigh.setText(str(UC.bar_to_psi+float(self.le_PHigh.text())))
-        # self.updateView(args)
-        self.Model.SI=SI
-        self.View.newUnits(w, ow, Model=self.Model)
-        pass
-
-    def newUnits(self):
-        """
-        This function updates the unit outputs based on what the user selects, between SI and English.
-        :return:
-        """
-        self.RC.updateUnits(self.widgets, self.otherwidgets, SI=self.rb_SI.isChecked())
-        # # If SI is checked, update units to SI
-        # if self.rb_SI.isChecked():
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=True)
-        # # If English is checked, update units to English
-        # else:
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=False)
-        return
-
-
 class rankineView():
     def __init__(self):
         """
@@ -206,51 +153,34 @@ class rankineView():
         """
 
     def outputToGUI(self, *args, Model=None):
-        widgets=args[0]
         #unpack the args
-        le_H1, le_H2, le_H3, le_H4, le_TurbineWork, le_PumpWork, le_HeatAdded, le_Efficiency, lbl_SatPropHigh, lbl_SatPropLow, ax, canvas = widgets
-
-        if len(args)>1:
-            otherwidgets = args[1]
+        le_H1, le_H2, le_H3, le_H4, le_TurbineWork, le_PumpWork, le_HeatAdded, le_Efficiency, lbl_SatPropHigh, lbl_SatPropLow, ax, canvas = args[0]
 
         #update the line edits and labels
-        # Creating shortcuts to call in the lines below; less to type each time
-        H1=Model.state1.h; H2=Model.state2.h; H3=Model.state3.h; H4=Model.state4.h
-        TW=Model.turbine_work; PW=Model.pump_work; HA=Model.heat_added
-
-        # Added if/else statements below based on if the user has selected SI or English units.
-        # These statements convert the values for H1, H2, H3, H4, Turbine Work, Pump Work, and Heat Added
-        le_H1.setText("{:0.2f}".format(Model.state1.h)) #H1 if Model.SI else UC.kJperkg_to_BTUperlb(H1)))
-        le_H2.setText("{:0.2f}".format(Model.state2.h)) #H2 if Model.SI else UC.kJperkg_to_BTUperlb(H2)))
-        le_H3.setText("{:0.2f}".format(Model.state3.h)) #H3 if Model.SI else UC.kJperkg_to_BTUperlb(H3)))
-        le_H4.setText("{:0.2f}".format(Model.state4.h)) #H4 if Model.SI else UC.kJperkg_to_BTUperlb(H4)))
-        le_TurbineWork.setText("{:0.2f}".format(Model.turbine_work)) #TW if Model.SI else UC.kJperkg_to_BTUperlb(TW)))
-        le_PumpWork.setText("{:0.2f}".format(Model.pump_work)) #PW if Model.SI else UC.kJperkg_to_BTUperlb(PW)))
-        le_HeatAdded.setText("{:0.2f}".format(Model.heat_added)) #HA if Model.SI else UC.kJperkg_to_BTUperlb(HA)))
-
-        # Efficiency doesn't need converting and PLow and PHigh are already converted previously in the code
+        # IF/ELSE STATEMENTS FOR UNIT CONVERSIONS FROM SI TO ENGLISH
+        H1=Model.state1.h
+        le_H1.setText("{:0.2f}".format(H1 if self.Model.SI else UC.kJperkg_to_BTUperlb(H1)))
+        H2=Model.state2.h
+        le_H2.setText("{:0.2f}".format(H2 if self.Model.SI else UC.kJperkg_to_BTUperlb(H2)))
+        H3=Model.state3.h
+        le_H3.setText("{:0.2f}".format(H3 if self.Model.SI else UC.kJperkg_to_BTUperlb(H3)))
+        H4=Model.state4.h
+        le_H4.setText("{:0.2f}".format(H4 if self.Model.SI else UC.kJperkg_to_BTUperlb(H4)))
+        TW=Model.turbine_work
+        le_TurbineWork.setText("{:0.2f}".format(TW if self.Model.SI else UC.kJperkg_to_BTUperlb(TW)))
+        PW=Model.pump_work
+        le_PumpWork.setText("{:0.2f}".format(PW if self.Model.SI else UC.kJperkg_to_BTUperlb(PW)))
+        HA=Model.heat_added
+        le_HeatAdded.setText("{:0.2f}".format(HA if self.Model.SI else UC.kJperkg_to_BTUperlb(HA)))
+        
         le_Efficiency.setText("{:0.2f}".format(Model.efficiency))
-        lbl_SatPropLow.setText(SatPropsIsobar(Model.p_low).txtOut)
+        lbl_SatPropLow.setText(SatPropsIsobar(Model.p_low).txtOut) # Already converted PLow and PHigh in the code
         lbl_SatPropHigh.setText(SatPropsIsobar(Model.p_high).txtOut)
 
         #update the plot
         ax.clear()
         self.plot_cycle_TS(axObj=ax, Model=Model)
         canvas.draw()
-
-    def newUnits(self):
-        """
-        This function updates the unit outputs based on what the user selects, between SI and English.
-        :return:
-        """
-        self.RC.updateUnits(self.widgets, self.otherwidgets, SI=self.rb_SI.isChecked())
-        # # If SI is checked, update units to SI
-        # if self.rb_SI.isChecked():
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=True)
-        # # If English is checked, update units to English
-        # else:
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=False)
-        return
 
     def print_summary(self, Model=None):
         """
@@ -286,7 +216,9 @@ class rankineView():
         step 6:  build data between state 2 and state 3
         step 7:  put together data from 3,4,5 for top line and build bottom line
         step 8:  make and decorate plot
+
         Note:  will plot using pyplot if axObj is None else just returns
+
         :param axObj:  if None, used plt.subplot else a MatplotLib axes object.
         :return:
         """
