@@ -46,8 +46,7 @@ class MainWindow(qtw.QWidget, Ui_Form):
         self.le_PHigh.textChanged[str].connect(self.newTemp) #changing PHigh using the new function defined below for new temp
         self.le_PLow.textChanged[str].connect(self.newPLow) #changing PLow using the new function defined below for new PLow
         self.le_TurbineInletCondition.textChanged[str].connect(self.newTemp) #changing PHigh using the new function defined below for new temp
-        self.rb_English.clicked.connect(self.newUnits) #changing the units to English if English is clicked
-        #self.rb_SI.clicked.connect(self.newUnits) #changing the units to SI if SI is clicked
+        self.rb_English.clicked.connect(self.newUnits) #changing the units to English if English radio button is clicked
 
     def newTemp(self):
         """
@@ -62,20 +61,23 @@ class MainWindow(qtw.QWidget, Ui_Form):
         This function changes the PLow value and updates the model based on inputs from the user.
         :return:
         """
+        # Creating a shortcut for the radio button SI being checked
         SI=self.rb_SI.isChecked()
+        # Creating a conversion factor for pressure if SI/English is checked
         PC=100 if SI else UC.psi_to_kpa
+        #Set the text for the SatPropHigh for PLow based on SI being changed and converting accordingly
         self.lbl_SatPropHigh.setText(SPI(float(self.le_PLow.text())*PC, SI=SI).txtOut)
-
-        # self.RC.updateModel((self.le_PHigh, self.le_PLow, self.rdo_Quality, self.le_TurbineInletCondition, self.le_TurbineEff))
-        # self.show()
 
     def newPHigh(self):
         """
         This function changes the PHigh value and updates the model based on inputs from the user.
         :return:
         """
+        # Creating a shortcut for the radio button SI being checked
         SI=self.rb_SI.isChecked()
+        # Creating a conversion factor for pressure if SI/English is checked
         PC=100 if SI else UC.psi_to_kpa
+        # Set the text for SatPropHigh for PHigh based on SI being changed and converting accordingly
         self.lbl_SatPropHigh.setText(SPI(float(self.le_PHigh.text())*PC, SI=SI).txtOut)
         self.SelectQualityOrTHigh()
 
@@ -84,14 +86,8 @@ class MainWindow(qtw.QWidget, Ui_Form):
         This function updates the unit outputs based on what the user selects, between SI and English.
         :return:
         """
+        # Update units if SI is checked
         self.RC.updateUnits(self.widgets, self.otherwidgets, SI=self.rb_SI.isChecked())
-        # # If SI is checked, update units to SI
-        # if self.rb_SI.isChecked():
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=True)
-        # # If English is checked, update units to English
-        # else:
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=False)
-        # return
 
     def MakeCanvas(self):
         """
@@ -116,8 +112,10 @@ class MainWindow(qtw.QWidget, Ui_Form):
     def mouseMoveEvent(self, event):
         self.oldXData=event.xdata if event.xdata is not None else self.oldXData
         self.oldYData=event.ydata if event.ydata is not None else self.oldYData
+        # Updating units if SI is checked, otherwise change to English units
         sUnit='KJ/(kg*K)' if self.rb_SI.isChecked() else 'BTU/(lb*R)'
         TUnit='C' if self.rb_SI.isChecked() else 'F'
+        # Updating the window title based on whether SI/English is checked
         self.setWindowTitle('s:{:0.2f} {}, T:{:0.2f} {}'.format(self.oldXData, sUnit, self.oldYData, TUnit))
 
     def Calculate(self):
@@ -141,11 +139,6 @@ class MainWindow(qtw.QWidget, Ui_Form):
             self.le_TurbineInletCondition.setEnabled(True)
         x=self.rdo_Quality.isChecked()
         self.lbl_TurbineInletCondition.setText(("Turbine Inlet: {}{} =".format('x' if x else 'THigh', '' if x else ('(C)' if SI else '(F)'))))
-
-        # self.Tselected=SPI(P=float(self.le_PHigh.text()) * pcf).TSat
-        # self.lbl_TurbineInletCondition.setText(("Turbine Inlet: {} =".format('x'if self.rdo_Quality.isChecked() else 'THigh')))
-        # if self.rdo_THigh.isChecked():
-        #     self.le_TurbineInletCondition.setText(str(self.Tselected))
 
 #if this module is being imported, this won't run. If it is the main module, it will run.
 if __name__== '__main__':
