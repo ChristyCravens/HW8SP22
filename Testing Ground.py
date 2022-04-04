@@ -19,7 +19,7 @@ class MyWindowClass(QMainWindow, form_class):
 
     def mybutton_clicked(self):
         options = QFileDialog.Options()
-        self.fileName, _ = QFileDialog.getOpenFileName(self,"Choose a File", "","txt Files (*.txt)", options=options)
+        self.fileName, _ = QFileDialog.getOpenFileName(self,"Choose a File","","txt Files (*.txt)", options=options)
         self.FileName.setText(self.fileName)
         header=pd.read_csv(self.fileName,nrows=1,header=None)
         data = pd.read_csv(self.fileName,delim_whitespace=True)
