@@ -43,7 +43,7 @@ class MainWindow(qtw.QWidget, Ui_Form):
         self.btn_Calculate.clicked.connect(self.Calculate)
         self.rdo_Quality.clicked.connect(self.SelectQualityOrTHigh)
         self.rdo_THigh.clicked.connect(self.SelectQualityOrTHigh)
-        self.le_PHigh.editingFinished.connect(self.newTemp) #changing PHigh using the new function defined below for new temp
+        self.le_PHigh.editingFinished.connect(self.newPHigh) #changing PHigh using the new function defined below for new PHigh
         self.le_PLow.editingFinished.connect(self.newPLow) #changing PLow using the new function defined below for new PLow
         self.le_TurbineInletCondition.editingFinished.connect(self.newTemp) #changing PHigh using the new function defined below for new temp
         self.rb_English.clicked.connect(self.newUnits) #changing the units to English if English radio button is clicked
