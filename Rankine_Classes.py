@@ -176,12 +176,6 @@ class rankineController():
         :return:
         """
         self.RC.updateUnits(self.widgets, self.otherwidgets, SI=self.rb_SI.isChecked())
-        # # If SI is checked, update units to SI
-        # if self.rb_SI.isChecked():
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=True)
-        # # If English is checked, update units to English
-        # else:
-        #     self.RC.updateUnits(self.widgets, self.otherwidgets, SI=False)
         return
 
 
