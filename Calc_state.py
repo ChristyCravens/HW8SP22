@@ -33,7 +33,11 @@ class UnitConverter():
     kg_to_lbf = 1/lbf_to_kg
     lbf_to_N = lbf_to_kg * g_SI
     pa_to_psi = (1 / (lbf_to_N)) * in2_to_m2
+    kpa_to_psi = 1000*pa_to_psi
+    psi_to_pa = 1/pa_to_psi
+    psi_to_kpa = psi_to_pa/1000
     bar_to_psi = pa_to_psi*100000
+    deltaK_to_deltaR = 9/5*(1.0)
 
     # Energy
     BTU_to_J=1055.06
@@ -41,6 +45,7 @@ class UnitConverter():
     BTU_to_kJ = 1/kJ_to_BTU
     kJperkg_to_BTUperlb = kJ_to_BTU/kg_to_lbf
     m3perkg_to_ft3perlb = m3_to_ft3/kg_to_lbf
+    kJperkgK_to_BTUperlbR = kJperkg_to_BTUperlb/deltaK_to_deltaR
 
     @classmethod  # a classmethod can be used directly from a class without needing to instantiate an object
     def viscosityEnglishToSI(cls, mu, toSI=True):
@@ -120,7 +125,7 @@ class UnitConverter():
         return cls.C_to_F(T-273.15)+459.67
 
 class SatPropsIsobar():
-    def __init__(self, P):
+    def __init__(self, P, SI=True):
         """
         Sets saturation properties for a given isobar
         :param P:  in kPa
@@ -136,7 +141,7 @@ class SatPropsIsobar():
         self.vg=float(griddata(pscol,vgcol,self.PSat,method = 'cubic'))
         # for doing unit conversions
         self.UC=UnitConverter()
-        self.getTextOutput()
+        self.getTextOutput(SI=SI)
 
     def getTextOutput(self, SI=True):
         """
@@ -152,8 +157,8 @@ class SatPropsIsobar():
             hf=self.hf*self.UC.kJperkg_to_BTUperlb
             hg=self.hg*self.UC.kJperkg_to_BTUperlb
             HUnits="BTU/lb"
-            sf=self.sf*self.UC.kJperkg_to_BTUperlb/self.UC.K_to_R(T=1)
-            sg=self.sg*self.UC.kJperkg_to_BTUperlb/self.UC.K_to_R(T=1)
+            sf=self.sf*self.UC.kJperkgK_to_BTUperlbR
+            sg=self.sg*self.UC.kJperkgK_to_BTUperlbR
             SUnits="BTU/lb*R"
             vf=self.vf*self.UC.m3perkg_to_ft3perlb
             vg=self.vg*self.UC.m3perkg_to_ft3perlb
@@ -185,9 +190,7 @@ class Steam_SI:
         This is a general steam class for sub-critical (i.e., superheated and saturated) properties of steam.
         The user may specify any two properties to calculate all other properties of the steam.
         Note: we have 6 properties, but only can specify two of them.  Combinations=6!/(2!4!)=15
-
         I handle all cases in self.calc
-
         :param P: Pressure (kPa)
         :param T: Temperature (C)
         :param x: Quality
@@ -611,7 +614,7 @@ class Steam_SI:
         if self.name is not None:
             print('Name: {}'.format(self.name))
         if self.region is not None:
-            print('Region: {}'.format(self.region))   
+            print('Region: {}'.format(self.region))
         if self.P is not None:
             print('p = {:.2f} kPa'.format(self.P))
         if self.T is not None:
@@ -661,4 +664,3 @@ def main():
 
 if __name__ == "__main__":
    main()
-
