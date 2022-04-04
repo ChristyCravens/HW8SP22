@@ -26,7 +26,7 @@ class MainWindow(qtw.QWidget, Ui_Form):
         #A tuple containing the widgets that get updated in the View
         self.widgets = (self.le_H1, self.le_H2, self.le_H3, self.le_H4, self.le_TurbineWork, self.le_PumpWork, self.le_HeatAdded, self.le_Efficiency, self.lbl_SatPropHigh, self.lbl_SatPropLow, self.ax, self.canvas)
         #Creating widgets for units for plot
-        self.otherwidgets = (self.le_PHigh, self.lbl_PHigh, self.le_PLow, self.lbl_PLow, self.lbl_H1Units, self.lbl_H2Units, self.lbl_H3Units, self.lbl_H4Units,  self.le_TurbineInletCondition, self.lbl_TurbineWorkUnits, self.lbl_PumpWorkUnits, self.lbl_HeatAddedUnits)
+        self.otherwidgets = (self.lbl_TurbineInletCondition, self.rdo_Quality,self.le_PHigh, self.lbl_PHigh, self.le_PLow, self.lbl_PLow, self.lbl_H1Units, self.lbl_H2Units, self.lbl_H3Units, self.lbl_H4Units,  self.le_TurbineInletCondition, self.lbl_TurbineWorkUnits, self.lbl_PumpWorkUnits, self.lbl_HeatAddedUnits)
         self.RC=rankineController(self.widgets)  # instantiate a rankineController object
 
         # a place to store coordinates from last position on graph
@@ -43,9 +43,9 @@ class MainWindow(qtw.QWidget, Ui_Form):
         self.btn_Calculate.clicked.connect(self.Calculate)
         self.rdo_Quality.clicked.connect(self.SelectQualityOrTHigh)
         self.rdo_THigh.clicked.connect(self.SelectQualityOrTHigh)
-        self.le_PHigh.textChanged[str].connect(self.newTemp) #changing PHigh using the new function defined below for new temp
-        self.le_PLow.textChanged[str].connect(self.newPLow) #changing PLow using the new function defined below for new PLow
-        self.le_TurbineInletCondition.textChanged[str].connect(self.newTemp) #changing PHigh using the new function defined below for new temp
+        self.le_PHigh.editingFinished.connect(self.newTemp) #changing PHigh using the new function defined below for new temp
+        self.le_PLow.editingFinished.connect(self.newPLow) #changing PLow using the new function defined below for new PLow
+        self.le_TurbineInletCondition.editingFinished.connect(self.newTemp) #changing PHigh using the new function defined below for new temp
         self.rb_English.clicked.connect(self.newUnits) #changing the units to English if English radio button is clicked
 
     def newTemp(self):
