@@ -3,6 +3,8 @@ from Calc_state import SatPropsIsobar
 from Calc_state import UnitConverter as UC
 import numpy as np
 from matplotlib import pyplot as plt
+
+# Group Members: Christy Cravens, Robert Lucas, and Gabe Moya
 #these imports are necessary for drawing a matplot lib graph on my GUI
 #no simple widget for this exists in QT Designer, so I have to add the widget in code.
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
